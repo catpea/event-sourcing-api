@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>event-sourcing-api todo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 3rem auto; padding: 0 1rem; }
+    form, footer { display: flex; gap: .5rem; margin: 1rem 0; }
+    li { display: flex; align-items: center; gap: .5rem; padding: .25rem 0; }
+    .done span { text-decoration: line-through; opacity: .65; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    import { esa, E } from "../src/index.js"
+
+    class TodoList {
+      items = []
+
+      TodoAdded(e) {
+        this.items.push({ id: e.id, text: e.text, done: false })
+      }
+
+      TodoCompleted(e) {
+        this.find(e.id).done = true
+      }
+
+      TodoReopened(e) {
+        this.find(e.id).done = false
+      }
+
+      TodoDeleted(e) {
+        this.items = this.items.filter(todo => todo.id !== e.id)
+      }
+
+      find(id) {
+        return this.items.find(todo => todo.id === id)
+      }
+    }
+
+    const store = esa.store([
+      E.TodoAdded({ id: crypto.randomUUID(), text: "Make events tiny" }),
+      E.TodoAdded({ id: crypto.randomUUID(), text: "Render with real DOM reconciliation" })
+    ])
+
+    esa.render("#app", TodoList, store, todos => `
+      <main>
+        <h1>event-sourcing-api</h1>
+
+        <form data-add>
+          <input name="text" placeholder="What happened next?" autocomplete="off" autofocus>
+          <button>Add</button>
+        </form>
+
+        <ul>
+          ${todos.items.map(todo => `
+            <li data-key="${todo.id}" class="${todo.done ? "done" : ""}">
+              <span>${escapeHtml(todo.text)}</span>
+              ${todo.done
+                ? `<button data-reopen="${todo.id}">Reopen</button>`
+                : `<button data-complete="${todo.id}">Done</button>`}
+              <button data-delete="${todo.id}">Delete</button>
+            </li>
+          `).join("")}
+        </ul>
+
+        <footer>
+          <button data-undo ${store.canUndo() ? "" : "disabled"}>Undo</button>
+          <button data-redo ${store.canRedo() ? "" : "disabled"}>Redo</button>
+          <small>${store.cursor()} / ${store.historySize()} events visible</small>
+        </footer>
+      </main>
+    `)
+
+    esa.on("#app", "submit", "form[data-add]", (form, event) => {
+      event.preventDefault()
+
+      const text = form.elements.text.value.trim()
+      if (!text) return
+
+      store.append(E.TodoAdded({ id: crypto.randomUUID(), text }))
+      form.reset()
+    })
+
+    esa.on("#app", "click", "[data-complete]", button => {
+      store.append(E.TodoCompleted({ id: button.dataset.complete }))
+    })
+
+    esa.on("#app", "click", "[data-reopen]", button => {
+      store.append(E.TodoReopened({ id: button.dataset.reopen }))
+    })
+
+    esa.on("#app", "click", "[data-delete]", button => {
+      store.append(E.TodoDeleted({ id: button.dataset.delete }))
+    })
+
+    esa.on("#app", "click", "[data-undo]", () => store.undo())
+    esa.on("#app", "click", "[data-redo]", () => store.redo())
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;")
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "name": "event-sourcing-api",
+  "version": "0.1.0",
+  "description": "A tiny dependency-free JavaScript event sourcing API for replayable state, undo/redo, and DOM reconciliation.",
+  "type": "module",
+  "sideEffects": false,
+
+  "keywords": [
+    "event-sourcing",
+    "events",
+    "dom",
+    "undo",
+    "redo",
+    "replay",
+    "esm",
+    "vanilla-js"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./dom": "./src/dom/index.js",
+    "./collections": "./src/collections/index.js",
+    "./validators": "./src/plugins/validators.js",
+    "./metadata": "./src/plugins/metadata.js"
+  },
+  "files": [
+    "src",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.js && node --check src/dom/reconcile.js && node --check src/store.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+
+  "author": "catpea (https://github.com/catpea)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catpea/event-sourcing-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/event-sourcing-api/issues"
+  },
+  "homepage": "https://catpea.github.io/event-sourcing-api",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/catpea"
+  }
+
+}
