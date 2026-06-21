@@ -30,6 +30,7 @@
   ],
   "scripts": {
     "test": "node --test",
+    "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;",
     "check": "node --check src/index.js && node --check src/dom/reconcile.js && node --check src/store.js"
   },
   "engines": {
