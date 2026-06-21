@@ -1,10 +1,9 @@
 {
   "name": "event-sourcing-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny dependency-free JavaScript event sourcing API for replayable state, undo/redo, and DOM reconciliation.",
   "type": "module",
   "sideEffects": false,
-
   "keywords": [
     "event-sourcing",
     "events",
@@ -36,7 +35,6 @@
   "engines": {
     "node": ">=18"
   },
-
   "author": "catpea (https://github.com/catpea)",
   "license": "MIT",
   "repository": {
@@ -51,5 +49,4 @@
     "type": "github",
     "url": "https://github.com/sponsors/catpea"
   }
-
 }
